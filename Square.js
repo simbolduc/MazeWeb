@@ -3,10 +3,10 @@ export default class Square {
     #element
     #row
     #column
-    #walls = [false, false, false, false]
     #visited = false
+    #visitedSide
 
-    static #wallDirections = ['border-top', 'border-right', 'border-bottom', 'border-left']
+    static wallDirections = ['border-top', 'border-right', 'border-bottom', 'border-left']
 
     constructor(element, row, column) {
         this.#element = element
@@ -14,13 +14,12 @@ export default class Square {
         this.#column = column
     }
 
-    draw(direction) {
-        // for(let i = 0; i < 4; i++) {
-        //     if(i === direction) {
-        //         this.#walls[i] = false
-        //         this.#element.style[Square.#wallDirections[i]] = 'none'
-        //     }
-        // }
+    draw(neighbors) {
+        for(let i = 0; i < Square.wallDirections.length; i++) {
+            if(this.#visitedSide) continue
+            if(neighbors[i] !== null && neighbors[i].getVisitedSide() === i) continue
+            this.#element.style[Square.wallDirections[i]] = '1px solid black'
+        }
     }
 
     getRow() {
@@ -40,6 +39,14 @@ export default class Square {
         if(value) {
             this.#element.style.backgroundColor = '#CFD8DC'
         }
+    }
+
+    setVisitedSide(side) {
+        this.#visitedSide = side
+    }
+
+    getVisitedSide() {
+        return this.#visitedSide
     }
 
     getElement() {

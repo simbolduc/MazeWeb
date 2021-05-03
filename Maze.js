@@ -84,11 +84,16 @@ export default class Maze {
             console.log(nextSquare)
 
             nextSquare.setAsVisited(true)
+            nextSquare.setVisitedSide(nextSquareData[1])
             // currentSquare.draw(nextSquareData[1])
             // nextSquare.draw(nextSquareData[1])
             history.push(nextSquare)
             visited++
         }
+
+        this.#squares.forEach(square => {
+            square.draw(this.#getNeighbors(square))
+        })
         console.log(this.#squares)
     }
 
@@ -138,6 +143,15 @@ export default class Maze {
         }
 
         return null
+    }
+
+    #getNeighbors(square) {
+        return [
+            this.#getSquareAtDirection(square, 0),
+            this.#getSquareAtDirection(square, 1),
+            this.#getSquareAtDirection(square, 2),
+            this.#getSquareAtDirection(square, 3)
+        ]
     }
 
 }
