@@ -1,5 +1,6 @@
 export default class Square {
 
+    #maze
     #element
     #row
     #column
@@ -9,7 +10,8 @@ export default class Square {
 
     static wallDirections = ['border-top', 'border-right', 'border-bottom', 'border-left']
 
-    constructor(element, row, column) {
+    constructor(maze, element, row, column) {
+        this.#maze = maze
         this.#element = element
         this.#row = row
         this.#column = column
@@ -22,6 +24,23 @@ export default class Square {
             this.#element.style[Square.wallDirections[i]] = '1px solid black'
             this.#walls[i] = true
         }
+    }
+
+    getAdjacents(){
+        const adjacents = []
+
+        for(let i = 0; i < Square.wallDirections.length; i++){
+            let adj = this.#maze.getSquareAtDirection(this, i)
+            if(this.#walls[i]) adj = null
+
+            adjacents.push(adj)
+        }
+
+        return adjacents
+    }
+
+    isClosed(side){
+        return this.#walls[side]
     }
 
     getRow() {

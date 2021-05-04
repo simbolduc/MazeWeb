@@ -1,4 +1,4 @@
-import Square from "./Square.js";
+import Square from "./Square.js"
 
 export default class Maze {
 
@@ -47,7 +47,7 @@ export default class Maze {
         square.classList.add('square')
 
         lastRow.append(square)
-        this.#squares.push(new Square(square, rows.length - 1, lastRow.children.length - 1))
+        this.#squares.push(new Square(this, square, rows.length - 1, lastRow.children.length - 1))
 
         return this.#createSquares(squareLength, ++count)
     }
@@ -89,7 +89,7 @@ export default class Maze {
     #hasUnvisitedNeighbor(square) {
         let neighbor
         for(let i = 0; i < 4; i++) {
-            neighbor = this.#getSquareAtDirection(square, i)
+            neighbor = this.getSquareAtDirection(square, i)
             if(neighbor !== null && !neighbor.isVisited()) {
                 return true
             }
@@ -98,7 +98,7 @@ export default class Maze {
         return false
     }
 
-    #getSquareAtDirection(square, direction) {
+    getSquareAtDirection(square, direction) {
         let row = square.getRow()
         let column = square.getColumn()
 
@@ -127,7 +127,7 @@ export default class Maze {
         let neighbor = null
         while(sides.length > 0) {
             sides = sides.sort(() => 0.5 - Math.random())
-            neighbor = this.#getSquareAtDirection(square, sides[0])
+            neighbor = this.getSquareAtDirection(square, sides[0])
             if(neighbor === null || neighbor.isVisited()) {
                 neighbor = null
                 sides.shift()
@@ -141,10 +141,10 @@ export default class Maze {
 
     #getNeighbors(square) {
         return [
-            this.#getSquareAtDirection(square, 0),
-            this.#getSquareAtDirection(square, 1),
-            this.#getSquareAtDirection(square, 2),
-            this.#getSquareAtDirection(square, 3)
+            this.getSquareAtDirection(square, 0),
+            this.getSquareAtDirection(square, 1),
+            this.getSquareAtDirection(square, 2),
+            this.getSquareAtDirection(square, 3)
         ]
     }
 
@@ -169,7 +169,57 @@ export default class Maze {
     }
 
     findPath() {
-        // Dijkstra's algorithm
-    }
+        const array = []
 
+        const start = this.#startSquare
+        const end = this.#stopSquare
+
+        const visited = new Map()
+        visited.set(start, null)
+
+        let current = start
+        let adjacents = current.getAdjacents()
+        while(current !== end){
+
+            adjacents = current.getAdjacents()
+            for (let i = 0; i < adjacents.length; i++) {
+                const adj = adjacents[i]
+                if(adj === null || visited.has(adj)) continue
+
+                visited.set(adj, current)
+                array.push(adj)
+            }
+
+            current = array.shift()
+        }
+
+        /*
+        * Build path
+        * */
+        let path = [current]
+        while(current !== this.#startSquare){
+            current = visited.get(current)
+            path.unshift(current)
+        }
+
+        /*
+        * Draw path
+        * */
+        let i = 1
+        let int = setInterval(()=>{
+            if(i === path.length){
+                clearInterval(int)
+                return
+            }
+
+            let square = path[i]
+
+            if(square !== this.#stopSquare) {
+                square.getElement().style.backgroundColor = "#F5D637"
+            }
+
+            i++
+        }, 25)
+
+    }
 }
