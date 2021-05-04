@@ -23,7 +23,6 @@ export default class Maze {
         this.#mazeElement.innerHTML = '' // Clear previous maze
         this.#createSquares(squareLength)
         this.#draw()
-        // console.log(this.#squares)
     }
 
     #createSquares(squareLength, count = 0) {
@@ -43,7 +42,6 @@ export default class Maze {
         let square = document.createElement('div')
         square.style.width = (squareLength - 1) + 'px'
         square.style.height = (squareLength - 1) + 'px'
-        // square.style.border = '1px solid #212121'
         lastRow.append(square)
         this.#squares.push(new Square(square, rows.length - 1, lastRow.children.length - 1))
 
@@ -58,17 +56,13 @@ export default class Maze {
         let currentSquare
         let nextSquareData
         history.push(this.#squares[0])
-        while(visited < this.#squareCount) {
-            if(history.length < 1) {
-                // console.log('ca a break')
-                break
-            }
+        while(visited < this.#squareCount && history.length >= 1) {
             currentSquare = history[history.length - 1]
             currentSquare.setAsVisited(true)
 
+            console.log(currentSquare)
+
             if(!this.#hasUnvisitedNeighbor(currentSquare)) {
-                // console.log('ici1')
-                // console.log(currentSquare)
                 history.pop()
                 continue
             }
@@ -76,17 +70,11 @@ export default class Maze {
             nextSquareData = this.#getUnvisitedSquare(currentSquare)
             nextSquare = nextSquareData[0]
 
-            if(nextSquare === null) {
-                // console.log('ici2')
+            if(nextSquare === null)
                 continue
-            }
-
-            console.log(nextSquare)
 
             nextSquare.setAsVisited(true)
-            nextSquare.setVisitedSide(nextSquareData[1])
-            // currentSquare.draw(nextSquareData[1])
-            // nextSquare.draw(nextSquareData[1])
+            currentSquare.setVisitedSide(nextSquareData[1])
             history.push(nextSquare)
             visited++
         }
@@ -94,7 +82,6 @@ export default class Maze {
         this.#squares.forEach(square => {
             square.draw(this.#getNeighbors(square))
         })
-        console.log(this.#squares)
     }
 
     #hasUnvisitedNeighbor(square) {
@@ -134,14 +121,19 @@ export default class Maze {
     }
 
     #getUnvisitedSquare(square) {
-        let neighbor
-        for(let i = 0; i < 4; i++) {
-            neighbor = this.#getSquareAtDirection(square, i)
-            if(neighbor !== null && !neighbor.isVisited()) {
-                return [neighbor, i]
+        let sides = [0, 1, 2, 3]
+        let neighbor = null
+        while(sides.length > 0) {
+            sides = sides.sort((a, b) => 0.5 - Math.random())
+            neighbor = this.#getSquareAtDirection(square, sides[0])
+            if(neighbor === null || neighbor.isVisited()) {
+                neighbor = null
+                sides.shift()
+                continue
             }
-        }
 
+            return [neighbor, sides[0]]
+        }
         return null
     }
 

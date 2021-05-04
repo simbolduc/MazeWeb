@@ -4,7 +4,7 @@ export default class Square {
     #row
     #column
     #visited = false
-    #visitedSide
+    #visitedSide = [false, false, false, false]
 
     static wallDirections = ['border-top', 'border-right', 'border-bottom', 'border-left']
 
@@ -16,8 +16,8 @@ export default class Square {
 
     draw(neighbors) {
         for(let i = 0; i < Square.wallDirections.length; i++) {
-            if(this.#visitedSide) continue
-            if(neighbors[i] !== null && neighbors[i].getVisitedSide() === i) continue
+            if(this.#visitedSide[i] === true) continue
+            if(neighbors[i] !== null && Square.getReversedSides(neighbors[i].getVisitedSide())[i] === false) continue
             this.#element.style[Square.wallDirections[i]] = '1px solid black'
         }
     }
@@ -42,15 +42,22 @@ export default class Square {
     }
 
     setVisitedSide(side) {
-        this.#visitedSide = side
+        this.#visitedSide[side] = true
     }
 
     getVisitedSide() {
         return this.#visitedSide
     }
 
-    getElement() {
-        return this.#element
+    static getReversedSides(sides) {
+        let reversed = []
+        for (let i = 0; i < sides.length; i++) {
+            if(i === 0) reversed.push(!sides[2])
+            if(i === 1) reversed.push(!sides[3])
+            if(i === 2) reversed.push(!sides[0])
+            if(i === 3) reversed.push(!sides[1])
+        }
+        return reversed
     }
 
 }
