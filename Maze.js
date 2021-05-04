@@ -6,7 +6,9 @@ export default class Maze {
     #width // How many squares are in the X dimension
     #height // How many squares are in the Y dimension
     #squareCount // How much squares are in total
-    #squares = []
+    #squares = [] // List of all squares generated in the maze
+    #startSquare = null // Start square object
+    #stopSquare = null // Stop square object
 
     constructor(width, height, maze) {
         this.#width = width
@@ -42,6 +44,8 @@ export default class Maze {
         let square = document.createElement('div')
         square.style.width = (squareLength - 1) + 'px'
         square.style.height = (squareLength - 1) + 'px'
+        square.classList.add('square')
+
         lastRow.append(square)
         this.#squares.push(new Square(square, rows.length - 1, lastRow.children.length - 1))
 
@@ -59,8 +63,6 @@ export default class Maze {
         while(visited < this.#squareCount && history.length >= 1) {
             currentSquare = history[history.length - 1]
             currentSquare.setAsVisited(true)
-
-            console.log(currentSquare)
 
             if(!this.#hasUnvisitedNeighbor(currentSquare)) {
                 history.pop()
@@ -124,7 +126,7 @@ export default class Maze {
         let sides = [0, 1, 2, 3]
         let neighbor = null
         while(sides.length > 0) {
-            sides = sides.sort((a, b) => 0.5 - Math.random())
+            sides = sides.sort(() => 0.5 - Math.random())
             neighbor = this.#getSquareAtDirection(square, sides[0])
             if(neighbor === null || neighbor.isVisited()) {
                 neighbor = null
@@ -144,6 +146,30 @@ export default class Maze {
             this.#getSquareAtDirection(square, 2),
             this.#getSquareAtDirection(square, 3)
         ]
+    }
+
+    getSquares() {
+        return this.#squares
+    }
+
+    setPosition(square) {
+        if(this.#startSquare === null) {
+            this.#startSquare = square
+            square.getElement().style.backgroundColor = '#AED581'
+            return
+        }
+        if(this.#stopSquare === null) {
+            this.#stopSquare = square
+            square.getElement().style.backgroundColor = '#EF5350'
+        }
+    }
+
+    arePositionsSet() {
+        return this.#startSquare !== null && this.#stopSquare !== null
+    }
+
+    findPath() {
+        // Dijkstra's algorithm
     }
 
 }

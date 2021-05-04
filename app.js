@@ -28,6 +28,33 @@ document.getElementById('gen-btn').addEventListener('click', e => {
     }
 
     maze = new Maze(width, height, mazeElement)
+
+    maze.getSquares().forEach(square => {
+        square.getElement().addEventListener('click', e => {
+            e.preventDefault()
+            e.stopPropagation()
+
+            maze.setPosition(square)
+        })
+    })
+
+    notify('Sélection des positions', 'Le labyrinthe est créé! Veuillez sélectionner avec le clique de la souris la position de début et de fin.', 'success')
+})
+
+document.getElementById('path-btn').addEventListener('click', e => {
+    e.preventDefault()
+    e.stopPropagation()
+    if(maze === null) {
+        notify('Aucun labyrinthe', 'Vous devez générer un labyrinthe avant même de trouver le chemin le plus rapide.')
+        return
+    }
+
+    if(!maze.arePositionsSet()) {
+        notify('Positionnements non sélectionnés', 'Veuillez sélectionner avec le clique de la souris la position de début et de fin.')
+        return
+    }
+
+    maze.findPath()
 })
 
 function notify(title, message, type = 'error') {

@@ -5,6 +5,7 @@ export default class Square {
     #column
     #visited = false
     #visitedSide = [false, false, false, false]
+    #walls = [false, false, false, false]
 
     static wallDirections = ['border-top', 'border-right', 'border-bottom', 'border-left']
 
@@ -19,6 +20,7 @@ export default class Square {
             if(this.#visitedSide[i] === true) continue
             if(neighbors[i] !== null && Square.getReversedSides(neighbors[i].getVisitedSide())[i] === false) continue
             this.#element.style[Square.wallDirections[i]] = '1px solid black'
+            this.#walls[i] = true
         }
     }
 
@@ -28,6 +30,10 @@ export default class Square {
 
     getColumn() {
         return this.#column
+    }
+
+    getElement() {
+        return this.#element
     }
 
     isVisited() {
