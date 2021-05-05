@@ -44,7 +44,7 @@ export default class Maze {
         let square = document.createElement('div')
         square.style.width = (squareLength - 1) + 'px'
         square.style.height = (squareLength - 1) + 'px'
-        square.classList.add('square')
+        square.classList.add('square', 'relative')
 
         lastRow.append(square)
         this.#squares.push(new Square(this, square, rows.length - 1, lastRow.children.length - 1))
@@ -179,12 +179,12 @@ export default class Maze {
 
         let current = start
         let adjacents = current.getAdjacents()
-        while(current !== end){
+        while (current !== end) {
 
             adjacents = current.getAdjacents()
             for (let i = 0; i < adjacents.length; i++) {
                 const adj = adjacents[i]
-                if(adj === null || visited.has(adj)) continue
+                if (adj === null || visited.has(adj)) continue
 
                 visited.set(adj, current)
                 array.push(adj)
@@ -197,7 +197,7 @@ export default class Maze {
         * Build path
         * */
         let path = [current]
-        while(current !== this.#startSquare){
+        while (current !== this.#startSquare) {
             current = visited.get(current)
             path.unshift(current)
         }
@@ -206,20 +206,21 @@ export default class Maze {
         * Draw path
         * */
         let i = 1
-        let int = setInterval(()=>{
-            if(i === path.length){
+        let square
+        let int = setInterval(() => {
+            if (i === path.length) {
                 clearInterval(int)
                 return
             }
 
-            let square = path[i]
-
-            if(square !== this.#stopSquare) {
-                square.getElement().style.backgroundColor = "#F5D637"
+            square = path[i]
+            if (square !== this.#stopSquare) {
+                // square.getElement().style.backgroundColor = "#aaaaaa"
+                square.drawPathLine(path[i - 1], path[i + 1])
             }
 
             i++
         }, 25)
-
     }
+
 }
