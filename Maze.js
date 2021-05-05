@@ -2,14 +2,15 @@ import Square from "./Square.js"
 
 export default class Maze {
 
-    #mazeElement // HTML Element representing the maze
-    #width // How many squares are in the X dimension
-    #height // How many squares are in the Y dimension
-    #squareCount // How much squares are in total
-    #squares = [] // List of all squares generated in the maze
-    #startSquare = null // Start square object
-    #stopSquare = null // Stop square object
+    #mazeElement // Élément HTML représentant le labyrinthe
+    #width // Nombre de carrés en X
+    #height // Nombre de carrés en Y
+    #squareCount // Nomnbre de carrés au total
+    #squares = [] // Liste de tous les carrés dans le labyrinthe
+    #startSquare = null // Case de départ
+    #stopSquare = null // Case de fin
 
+    // Constructeur permettant la génération initiale du labyrinthe
     constructor(width, height, maze) {
         this.#width = width
         this.#height = height
@@ -19,19 +20,23 @@ export default class Maze {
         this.#init()
     }
 
+    // Initialisation du labyrinthe
     #init() {
         let mazeWidth = this.#mazeElement.offsetWidth
-        let squareLength = Math.floor(mazeWidth / this.#width)
+        let squareLength = Math.floor(mazeWidth / this.#width) // On divise la largeur totale du labyrinthe par le nombre de carrés en X pour obtenir la largeur d'un carré
         this.#mazeElement.innerHTML = '' // Clear previous maze
         this.#createSquares(squareLength)
         this.#draw()
     }
 
+    // Ajout des carrés initialement vides du labyrinthe
     #createSquares(squareLength, count = 0) {
         if(count === this.#squareCount)
             return
 
+        // Chaque fois qu'une ligne est pleine, ajouté une nouvelle
         if(count % this.#width === 0) {
+            // Création d'un élément HTML représentant une ligne
             let row = document.createElement('div')
             row.classList.add('row', 'w-full', 'flex', 'flex-wrap', 'justify-center', 'items-center')
             row.dataset.row = ((count % this.#width) + Math.floor(count / this.#width)) + ''
@@ -41,6 +46,7 @@ export default class Maze {
         let rows = this.#mazeElement.getElementsByClassName('row')
         let lastRow = rows[rows.length - 1]
 
+        // Création d'un élément HTML représentant un carré
         let square = document.createElement('div')
         square.style.width = (squareLength - 1) + 'px'
         square.style.height = (squareLength - 1) + 'px'
@@ -52,6 +58,7 @@ export default class Maze {
         return this.#createSquares(squareLength, ++count)
     }
 
+    // Algorithme de "back-tracking" permettant de générer les ouvertures de murs et les dessiner pour finalement créer le labyrinthe
     #draw() {
         let visited = 0
         let history = []
@@ -60,6 +67,7 @@ export default class Maze {
         let currentSquare
         let nextSquareData
         history.push(this.#squares[0])
+        // L'algorithme bouge dans les cases jusqu'attend qu'il ait visité tous les carrés
         while(visited < this.#squareCount && history.length >= 1) {
             currentSquare = history[history.length - 1]
             currentSquare.setAsVisited(true)
@@ -86,11 +94,12 @@ export default class Maze {
         })
     }
 
+    // Retourne si la carré paramétré a un voisin non-visité
     #hasUnvisitedNeighbor(square) {
         let neighbor
         for(let i = 0; i < 4; i++) {
             neighbor = this.getSquareAtDirection(square, i)
-            if(neighbor !== null && !neighbor.isVisited()) {
+            if(neighbor !== null && !neighbor.isVisited()) { // Si le voisin existe et qu'il n'est pas retourné, retourner VRAI
                 return true
             }
         }
@@ -98,6 +107,7 @@ export default class Maze {
         return false
     }
 
+    // Retourne le carré à la direction donnée relativement à un carré précisé
     getSquareAtDirection(square, direction) {
         let row = square.getRow()
         let column = square.getColumn()
@@ -118,6 +128,7 @@ export default class Maze {
         return this.#getSquare(row, column)
     }
 
+    // Retourne le carré selon une ligne et une colonne donnée
     #getSquare(row, column) {
         return this.#squares[row * this.#width + column]
     }
@@ -128,7 +139,7 @@ export default class Maze {
         while(sides.length > 0) {
             sides = sides.sort(() => 0.5 - Math.random())
             neighbor = this.getSquareAtDirection(square, sides[0])
-            if(neighbor === null || neighbor.isVisited()) {
+            if(neighbor === null || neighbor.isVisited()) { // Si le carré est hors du labyrinthe ou est visité, bouger le curseur
                 neighbor = null
                 sides.shift()
                 continue
@@ -139,6 +150,7 @@ export default class Maze {
         return null
     }
 
+    // Retourne les 4 voisins d'un carré
     #getNeighbors(square) {
         return [
             this.getSquareAtDirection(square, 0),
@@ -148,10 +160,12 @@ export default class Maze {
         ]
     }
 
+    // Retourne la liste des carrés du labyrinthe
     getSquares() {
         return this.#squares
     }
 
+    // Définis les points clefs du labyrinthe (début et fin)
     setPosition(square) {
         if(this.#startSquare === null) {
             this.#startSquare = square
@@ -164,10 +178,12 @@ export default class Maze {
         }
     }
 
+    // Retourne VRAI ou FAUX si les positions de début et de fin sont sélectionnées
     arePositionsSet() {
         return this.#startSquare !== null && this.#stopSquare !== null
     }
 
+    // Algorithme permettant de tracer un tracé du chemin le plus court en partant du point de début vers le point de la fin
     findPath() {
         const array = []
 
@@ -194,7 +210,7 @@ export default class Maze {
         }
 
         /*
-        * Build path
+        * Construction du chemin
         * */
         let path = [current]
         while (current !== this.#startSquare) {
@@ -203,7 +219,7 @@ export default class Maze {
         }
 
         /*
-        * Draw path
+        * Dessin progressif du chemin (tracé ligné)
         * */
         let i = 1
         let square
@@ -214,10 +230,8 @@ export default class Maze {
             }
 
             square = path[i]
-            if (square !== this.#stopSquare) {
-                // square.getElement().style.backgroundColor = "#aaaaaa"
+            if (square !== this.#stopSquare)
                 square.drawPathLine(path[i - 1], path[i + 1])
-            }
 
             i++
         }, 25)

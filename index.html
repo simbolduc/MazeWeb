@@ -18,18 +18,22 @@
             <i class="fas fa-cog"></i> Paramètres du labyrinthe
         </h1>
         <div class="w-full flex flex-wrap">
+            <!--     Champ pour définir la dimension du labyrinthe en X       -->
             <div class="w-1/2 p-4">
                 <label for="x-length" class="text-xs font-light uppercase">Dimension en X</label>
                 <input id="x-length" type="number" min="10" max="50" step="10" value="10" class="bg-gray-100 shadow-outline outline-none text-gray-800 p-4 w-full">
             </div>
+            <!--     Champ pour définir la dimension du labyrinthe en Y       -->
             <div class="w-1/2 p-4">
                 <label for="y-length" class="text-xs font-light uppercase">Dimension en Y</label>
                 <input id="y-length" type="number" min="10" max="50" step="10" value="10" class="bg-gray-100 shadow-outline outline-none text-gray-800 p-4 w-full">
             </div>
             <div class="w-full px-4">
+                <!--     Bouton pour générer le labyrinthe       -->
                 <button id="gen-btn" class="bg-green-200 px-5 py-3">
                     <i class="fas fa-wave-square mr-2"></i> Générer le labyrinthe
                 </button>
+                <!--     Bouton pour trouver le chemin le plus court (et l'afficher)       -->
                 <button id="path-btn" class="bg-green-200 px-5 py-3">
                     <i class="fas fa-magic mr-2"></i> Trouver le chemin le plus court
                 </button>
@@ -40,6 +44,8 @@
         <h1 class="text-2xl uppercase">
             <i class="fas fa-border-none"></i> Labyrinthe
         </h1>
+
+        <!--     Élément dans lequel le labyrinthe sera construit       -->
         <div id="maze" class="mt-4 flex flex-wrap justify-center items-center">
         </div>
     </main>
