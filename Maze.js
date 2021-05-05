@@ -183,27 +183,28 @@ export default class Maze {
         return this.#startSquare !== null && this.#stopSquare !== null
     }
 
-    // Algorithme permettant de tracer un tracé du chemin le plus court en partant du point de début vers le point de la fin
+    // Algorithme permettant de tracer un tracé du chemin le plus court
+    // en partant du point de début vers le point de la fin
     findPath() {
         const array = []
 
         const start = this.#startSquare
         const end = this.#stopSquare
 
-        const visited = new Map()
+        const visited = new Map() //Map contenant en clé: un voisin et en valeur le prédecesseur.
         visited.set(start, null)
 
-        let current = start
-        let adjacents = current.getAdjacents()
+        let current = start //Le premier sommet est la case départ sélectionné par l'utilisateur.
+        let adjacents = current.getAdjacents() //On récupère les sommets voisins
         while (current !== end) {
 
             adjacents = current.getAdjacents()
-            for (let i = 0; i < adjacents.length; i++) {
+            for (let i = 0; i < adjacents.length; i++) { //On traite chacun des voisins non-visités.
                 const adj = adjacents[i]
                 if (adj === null || visited.has(adj)) continue
 
-                visited.set(adj, current)
-                array.push(adj)
+                visited.set(adj, current) // On ajoute le voisin et son prédécesseur dans la Map
+                array.push(adj) //On ajoute le voisin dans le tableau comme ça il est traité lui aussi
             }
 
             current = array.shift()
@@ -213,7 +214,7 @@ export default class Maze {
         * Construction du chemin
         * */
         let path = [current]
-        while (current !== this.#startSquare) {
+        while (current !== this.#startSquare) { //Boucle permettant de reconstruire le chemin le plus court en remontant le graphe.
             current = visited.get(current)
             path.unshift(current)
         }
